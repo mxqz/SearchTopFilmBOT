@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SearchFilmBot</title>
+    <style>
+        /* Встановлюємо загальний стиль для сторінки */
+        body, html {
+            height: 100%; /* Заповнюємо висоту на 100% */
+            width: 100%; /* Заповнюємо ширину на 100% */
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            background-image: url('background.png'); /* Заміни на шлях до свого зображення */
+            background-size: cover; /* Зображення масштабується, щоб заповнити весь екран */
+            background-position: center; /* Центруємо зображення */
+            background-repeat: no-repeat; /* Не повторюємо зображення */
+            color: #fff;
+        }
+
+        /* Стиль навігаційної панелі */
+        .navbar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px; /* Ширина панелі навігації */
+            padding: 10px 0; /* Зменшено внутрішнє відступлення */
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            margin-top: 10px; /* Піднято вище */
+        }
+
+        /* Стиль для кожної вкладки */
+        .navbar-item {
+            padding: 8px 15px; /* Зменшено внутрішній відступ */
+            margin: 0 10px; /* Зменшено відступ між вкладками */
+            background-color: rgba(30, 30, 30, 0.8);
+            border-radius: 20px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Додаємо відступ для облікового запису */
+        .navbar-item.account {
+            margin-left: auto; /* Вирівнюємо до правого краю */
+            display: flex;
+            align-items: center;
+        }
+
+        /* Стиль для іконки акаунта */
+        .account-icon {
+            margin-left: 8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+
+        /* Стиль для нижнього посилання */
+        .footer-link {
+            padding: 12px 25px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* Зміна кольору посилання при наведенні */
+        .navbar-item:hover, .footer-link:hover {
+            background-color: rgba(50, 50, 50, 0.9);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Навігаційна панель з вкладками -->
+<div class="navbar">
+    <a href="#" class="navbar-item">Фільми</a>
+    <a href="#" class="navbar-item">Серіали</a>
+    <a href="#" class="navbar-item">Аніме</a>
+    <a href="#" class="navbar-item">Манга</a>
+    <a href="#" class="navbar-item account">Акаунт
+        <!-- Додаємо зображення як іконку акаунта -->
+        <img src="account-icon.png" alt="Іконка акаунта" class="account-icon">
+    </a>
+</div>
+
+<!-- Центруємо посилання внизу сторінки -->
+<a href="https://t.me/kotako_l_l/" target="_blank" class="footer-link">Telegram</a>
+
+</body>
+</html>
