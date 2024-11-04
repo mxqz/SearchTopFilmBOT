@@ -65,13 +65,32 @@
         /* Стиль для нижнього посилання */
         .footer-link {
             padding: 12px 25px;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(15, 14, 14, 0.7);
             border-radius: 20px;
             margin-bottom: 20px;
             text-decoration: none;
             color: #fff;
             font-weight: bold;
         }
+
+        /* Стиль для пошукового рядка всередині навігаційної панелі */
+.search-bar {
+    flex-grow: 3; /* Займає доступне місце між вкладками і акаунтом */
+    display: flex;
+    justify-content: center;
+    margin: 0 10px; /* Відступи з боків від вкладок */
+}
+
+.search-input {
+    width: 100%; /* Розтягується на всю ширину доступного простору */
+    max-width: 600px; /* Максимальна ширина для зручності */
+    padding: 8px;
+    border: none;
+    border-radius: 20px;
+    outline: none;
+    font-size: 14px;
+    color: #343333;
+}
 
         /* Зміна кольору посилання при наведенні */
         .navbar-item:hover, .footer-link:hover {
@@ -87,14 +106,22 @@
     <a href="#" class="navbar-item">Серіали</a>
     <a href="#" class="navbar-item">Аніме</a>
     <a href="#" class="navbar-item">Манга</a>
+
+<!-- Пошуковий рядок всередині панелі навігації -->
+<form action="#" method="get" class="search-bar">
+    <input type="text" placeholder="Пошук.. " name="search" class="search-input">
+</form>
+
     <a href="#" class="navbar-item account">Акаунт
         <!-- Додаємо зображення як іконку акаунта -->
         <img src="Images/account-icon.png" alt="Іконка акаунта" class="account-icon">
     </a>
 </div>
 
+
+
 <!-- Центруємо посилання внизу сторінки -->
-<a href="https://t.me/kotako_l_l/" target="_blank" class="footer-link">Telegram</a>
+<a href="https://t.me/kotako_l_GPT/" target="_blank" class="footer-link">Telegram</a>
 
 </body>
 </html>
