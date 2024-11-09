@@ -1,11 +1,7 @@
-/* styles.css */
-
-/* Бодя лашара*/
-
-/* Встановлюємо загальний стиль для сторінки */
+/* Загальні стилі */
 body, html {
-    height: 100%; /* Заповнюємо висоту на 100% */
-    width: 100%; /* Заповнюємо ширину на 100% */
+    height: 100%;
+    width: 100%;
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
@@ -14,9 +10,9 @@ body, html {
     justify-content: space-between;
     align-items: center;
     background-image: url('Images/background.png'); /* Заміни на шлях до свого зображення */
-    background-size: cover; /* Зображення масштабується, щоб заповнити весь екран */
-    background-position: center; /* Центруємо зображення */
-    background-repeat: no-repeat; /* Не повторюємо зображення */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     color: #fff;
 }
 
@@ -26,17 +22,17 @@ body, html {
     justify-content: center;
     align-items: center;
     width: 100%;
-    max-width: 1200px; /* Ширина панелі навігації */
-    padding: 10px 0; /* Зменшено внутрішнє відступлення */
+    max-width: 1200px;
+    padding: 10px 0;
     background-color: rgba(0, 0, 0, 0.7);
     border-radius: 10px;
-    margin-top: 10px; /* Піднято вище */
+    margin-top: 10px;
 }
 
 /* Стиль для кожної вкладки */
 .navbar-item {
-    padding: 8px 15px; /* Зменшено внутрішній відступ */
-    margin: 0 10px; /* Зменшено відступ між вкладками */
+    padding: 8px 15px;
+    margin: 0 10px;
     background-color: rgba(30, 30, 30, 0.8);
     border-radius: 20px;
     color: #fff;
@@ -52,7 +48,7 @@ body, html {
 
 /* Додаємо відступ для облікового запису */
 .navbar-item.account {
-    margin-left: auto; /* Вирівнюємо до правого краю */
+    margin-left: auto;
     display: flex;
     align-items: center;
 }
@@ -78,15 +74,15 @@ body, html {
 
 /* Стиль для пошукового рядка всередині навігаційної панелі */
 .search-bar {
-    flex-grow: 3; /* Займає доступне місце між вкладками і акаунтом */
+    flex-grow: 3;
     display: flex;
     justify-content: center;
-    margin: 0 10px; /* Відступи з боків від вкладок */
+    margin: 0 10px;
 }
 
 .search-input {
-    width: 100%; /* Розтягується на всю ширину доступного простору */
-    max-width: 600px; /* Максимальна ширина для зручності */
+    width: 100%;
+    max-width: 600px;
     padding: 8px;
     border: none;
     border-radius: 20px;
@@ -98,4 +94,57 @@ body, html {
 /* Зміна кольору посилання при наведенні */
 .navbar-item:hover, .footer-link:hover {
     background-color: rgba(80, 80, 80, 0.9);
+}
+
+/* Модальне вікно */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    position: relative;
+    background-color: #fefefe;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    color: #333;
+}
+
+.close {
+    position: absolute; 
+    top: 6px; 
+    right: 10px; 
+    font-size: 24px;
+    cursor: pointer;
+    color: #333; 
+}
+
+input[type="text"], input[type="password"] {
+    width: 60%;
+    padding: 8px;
+    margin: 8px 0;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.login-button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
 }

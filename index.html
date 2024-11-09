@@ -29,15 +29,47 @@
 <!-- Центруємо посилання внизу сторінки -->
 <a href="https://t.me/kotako_l_GPT/" target="_blank" class="footer-link">Telegram</a>
 
-<!-- JavaScript для встановлення активного стану -->
+<!-- Модальне вікно для авторизації -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Вхід в акаунт</h2>
+        <form action="#" method="post">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit" class="login-button">Увійти</button>
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript для встановлення активного стану та роботи модального вікна -->
 <script>
+    // Функція для встановлення активного стану вкладки
     function setActive(element) {
-        // Знімаємо активний клас з усіх кнопок
         const items = document.querySelectorAll('.navbar-item');
         items.forEach(item => item.classList.remove('active'));
-
-        // Додаємо активний клас до натиснутої кнопки
         element.classList.add('active');
+    }
+
+    // Відкриває модальне вікно при натисканні на "Акаунт"
+    document.querySelector('.account').onclick = function(event) {
+        event.preventDefault();
+        document.getElementById('loginModal').style.display = 'flex';
+    }
+
+    // Закриває модальне вікно
+    function closeModal() {
+        document.getElementById('loginModal').style.display = 'none';
+    }
+
+    // Закриває модальне вікно при натисканні поза його межами
+    window.onclick = function(event) {
+        const modal = document.getElementById('loginModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
     }
 </script>
 
