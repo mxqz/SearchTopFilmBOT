@@ -46,12 +46,12 @@
 
 <!-- JavaScript для встановлення активного стану та роботи модального вікна -->
 <script>
-    // Функція для встановлення активного стану вкладки
-    function setActive(element) {
-        const items = document.querySelectorAll('.navbar-item');
-        items.forEach(item => item.classList.remove('active'));
-        element.classList.add('active');
-    }
+     // Функція для встановлення активного стану вкладки
+   function setActive(element) {
+    const items = document.querySelectorAll('.navbar-item');
+    items.forEach(item => item.classList.remove('active')); 
+    element.classList.add('active'); 
+}
 
     // Відкриває модальне вікно при натисканні на "Акаунт"
     document.querySelector('.account').onclick = function(event) {
