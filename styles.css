@@ -16,6 +16,11 @@ body, html {
     color: #fff;
 }
 
+label {
+    display: flex; /* Або inline-flex, якщо це більше підходить */
+    width: 100%; /* Забезпечує, що input займатиме весь доступний простір */
+}
+
 /* Стиль навігаційної панелі */
 .navbar {
     display: flex;
