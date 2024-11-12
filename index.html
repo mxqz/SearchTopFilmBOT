@@ -17,7 +17,9 @@
 
     <!-- Пошуковий рядок всередині панелі навігації -->
     <form action="#" method="get" class="search-bar">
-        <input type="text" placeholder="Пошук.. " name="search" class="search-input">
+        <label>
+            <input type="text" placeholder="Пошук.. " name="search" class="search-input">
+        </label>
     </form>
 
     <a href="#" class="navbar-item account">Вхід
@@ -67,7 +69,7 @@
     // Закриває модальне вікно при натисканні поза його межами
     window.onclick = function(event) {
         const modal = document.getElementById('loginModal');
-        if (event.target == modal) {
+        if (event.target === modal) {
             modal.style.display = 'none';
         }
     }
