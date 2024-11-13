@@ -10,16 +10,14 @@
 
 <!-- Навігаційна панель з вкладками -->
 <div class="navbar">
-    <a href="#" class="navbar-item" onclick="setActive(this)">Фільми</a>
-    <a href="#" class="navbar-item" onclick="setActive(this)">Серіали</a>
-    <a href="#" class="navbar-item" onclick="setActive(this)">Аніме</a>
-    <a href="#" class="navbar-item" onclick="setActive(this)">Манга</a>
+    <a href="#" class="navbar-item" onclick="openTab(event, 'films')">Фільми</a>
+    <a href="#" class="navbar-item" onclick="openTab(event, 'series')">Серіали</a>
+    <a href="#" class="navbar-item" onclick="openTab(event, 'anime')">Аніме</a>
+    <a href="#" class="navbar-item" onclick="openTab(event, 'manga')">Манга</a>
 
     <!-- Пошуковий рядок всередині панелі навігації -->
     <form action="#" method="get" class="search-bar">
-        <label>
-            <input type="text" placeholder="Пошук.. " name="search" class="search-input">
-        </label>
+        <input type="text" placeholder="Пошук.." name="search" class="search-input">
     </form>
 
     <a href="#" class="navbar-item account">Вхід
@@ -28,8 +26,19 @@
     </a>
 </div>
 
-<!-- Центруємо посилання внизу сторінки -->
-<a href="https://t.me/kotako_l_GPT/" target="_blank" class="footer-link">Telegram</a>
+<!-- Контейнер для вкладок -->
+<div id="films" class="tab-content">
+    <h2>Фільми</h2>
+</div>
+<div id="series" class="tab-content" style="display:none;">
+    <h2>Серіали</h2>
+</div>
+<div id="anime" class="tab-content" style="display:none;">
+    <h2>Аніме</h2>
+</div>
+<div id="manga" class="tab-content" style="display:none;">
+    <h2>Манга</h2>
+</div>
 
 <!-- Модальне вікно для авторизації -->
 <div id="loginModal" class="modal">
@@ -46,14 +55,22 @@
     </div>
 </div>
 
-<!-- JavaScript для встановлення активного стану та роботи модального вікна -->
+<!-- JavaScript для вкладок і модального вікна -->
 <script>
-     // Функція для встановлення активного стану вкладки
-   function setActive(element) {
-    const items = document.querySelectorAll('.navbar-item');
-    items.forEach(item => item.classList.remove('active')); 
-    element.classList.add('active'); 
-}
+    // Функція для відкриття вкладки
+    function openTab(event, tabId) {
+        // Приховуємо весь вміст вкладок
+        const tabContents = document.querySelectorAll(".tab-content");
+        tabContents.forEach(content => content.style.display = "none");
+
+        // Знімаємо активний клас з усіх вкладок
+        const navbarItems = document.querySelectorAll(".navbar-item");
+        navbarItems.forEach(item => item.classList.remove("active"));
+
+        // Показуємо обраний вміст і встановлюємо активний стан для вибраної вкладки
+        document.getElementById(tabId).style.display = "block";
+        event.currentTarget.classList.add("active");
+    }
 
     // Відкриває модальне вікно при натисканні на "Акаунт"
     document.querySelector('.account').onclick = function(event) {
@@ -73,6 +90,9 @@
             modal.style.display = 'none';
         }
     }
+
+    // Показуємо першу вкладку за замовчуванням
+    document.getElementById("films").style.display = "block";
 </script>
 
 </body>

@@ -16,11 +16,6 @@ body, html {
     color: #fff;
 }
 
-label {
-    display: flex; /* Або inline-flex, якщо це більше підходить */
-    width: 100%; /* Забезпечує, що input займатиме весь доступний простір */
-}
-
 /* Стиль навігаційної панелі */
 .navbar {
     display: flex;
@@ -77,6 +72,7 @@ label {
     font-weight: bold;
 }
 
+
 /* Стиль для пошукового рядка всередині навігаційної панелі */
 .search-bar {
     flex-grow: 3;
@@ -99,6 +95,18 @@ label {
 /* Зміна кольору посилання при наведенні */
 .navbar-item:hover, .footer-link:hover {
     background-color: rgba(80, 80, 80, 0.9);
+}
+
+/* Стилі для вкладок */
+.tab-content {
+    display: none;
+    padding: 20px;
+    margin-top: 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    width: 100%;
+    max-width: 1200px;
+    text-align: center;
 }
 
 /* Модальне вікно */
@@ -152,3 +160,4 @@ input[type="text"], input[type="password"] {
     cursor: pointer;
     font-weight: bold;
 }
+
