@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SearchFilmBot</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Підключаємо CSS файл -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> <!-- Підключаємо CSS файл -->
 </head>
 <body>
 
@@ -15,29 +15,70 @@
     <a href="#" class="navbar-item" onclick="openTab(event, 'anime')">Аніме</a>
     <a href="#" class="navbar-item" onclick="openTab(event, 'manga')">Манга</a>
 
+    
+
     <!-- Пошуковий рядок всередині панелі навігації -->
     <form action="#" method="get" class="search-bar">
         <input type="text" placeholder="Пошук.." name="search" class="search-input">
     </form>
 
-    <a href="#" class="navbar-item account">Вхід
+    <a href="#" class="navbar-item account" id="loginLink">Вхід
         <!-- Додаємо зображення як іконку акаунта -->
-        <img src="Images/account-icon.png" alt="Іконка акаунта" class="account-icon">
+        <img src="{{ url_for('static', filename='Images/account-icon.png') }}" alt="Іконка акаунта" class="account-icon">
     </a>
 </div>
 
 <!-- Контейнер для вкладок -->
 <div id="films" class="tab-content">
     <h2>Фільми</h2>
+    <!-- Тут буде виведено список фільмів за допомогою Flask -->
+    <div id="films-list">
+        {% for film in films %}
+            <div class="film-item">
+                <h3>{{ film.title }}</h3>
+                <p>{{ film.description }}</p>
+            </div>
+        {% endfor %}
+    </div>
 </div>
+
 <div id="series" class="tab-content" style="display:none;">
     <h2>Серіали</h2>
+    <!-- Тут буде виведено список серіалів -->
+    <div id="series-list">
+        {% for series in series %}
+            <div class="series-item">
+                <h3>{{ series.title }}</h3>
+                <p>{{ series.description }}</p>
+            </div>
+        {% endfor %}
+    </div>
 </div>
+
 <div id="anime" class="tab-content" style="display:none;">
     <h2>Аніме</h2>
+    <!-- Тут буде виведено список аніме -->
+    <div id="anime-list">
+        {% for anime in anime %}
+            <div class="anime-item">
+                <h3>{{ anime.title }}</h3>
+                <p>{{ anime.description }}</p>
+            </div>
+        {% endfor %}
+    </div>
 </div>
+
 <div id="manga" class="tab-content" style="display:none;">
     <h2>Манга</h2>
+    <!-- Тут буде виведено список манги -->
+    <div id="manga-list">
+        {% for manga in manga %}
+            <div class="manga-item">
+                <h3>{{ manga.title }}</h3>
+                <p>{{ manga.description }}</p>
+            </div>
+        {% endfor %}
+    </div>
 </div>
 
 <!-- Модальне вікно для авторизації -->
@@ -73,7 +114,7 @@
     }
 
     // Відкриває модальне вікно при натисканні на "Акаунт"
-    document.querySelector('.account').onclick = function(event) {
+    document.querySelector('#loginLink').onclick = function(event) {
         event.preventDefault();
         document.getElementById('loginModal').style.display = 'flex';
     }
