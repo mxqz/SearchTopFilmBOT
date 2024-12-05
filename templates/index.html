@@ -4,82 +4,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SearchFilmBot</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> <!-- Підключаємо CSS файл -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
 
-<!-- Навігаційна панель з вкладками -->
+<!-- Навігаційна панель -->
 <div class="navbar">
     <a href="#" class="navbar-item" onclick="openTab(event, 'films')">Фільми</a>
     <a href="#" class="navbar-item" onclick="openTab(event, 'series')">Серіали</a>
     <a href="#" class="navbar-item" onclick="openTab(event, 'anime')">Аніме</a>
     <a href="#" class="navbar-item" onclick="openTab(event, 'manga')">Манга</a>
 
-    
-
-    <!-- Пошуковий рядок всередині панелі навігації -->
-    <form action="#" method="get" class="search-bar">
-        <input type="text" placeholder="Пошук.." name="search" class="search-input">
+    <form action="/api/search" method="get" class="search-bar">
+        <input type="text" placeholder="Пошук.." name="q" class="search-input">
+        <input type="hidden" name="tab" id="activeTabInput" value="films">
+        <button type="submit">Пошук</button>
     </form>
 
     <a href="#" class="navbar-item account" id="loginLink">Вхід
-        <!-- Додаємо зображення як іконку акаунта -->
         <img src="{{ url_for('static', filename='Images/account-icon.png') }}" alt="Іконка акаунта" class="account-icon">
     </a>
 </div>
 
+<!-- Повідомлення про помилку -->
+{% if error %}
+<div class="error-message">
+    <p>{{ error }}</p>
+</div>
+{% endif %}
+
 <!-- Контейнер для вкладок -->
-<div id="films" class="tab-content">
+<div id="films" class="tab-content" {% if active_tab != 'films' %}style="display:none;"{% endif %}>
     <h2>Фільми</h2>
-    <!-- Тут буде виведено список фільмів за допомогою Flask -->
     <div id="films-list">
-        {% for film in films %}
-            <div class="film-item">
-                <h3>{{ film.title }}</h3>
-                <p>{{ film.description }}</p>
-            </div>
-        {% endfor %}
+        {% if search_results %}
+            {% for result in search_results %}
+                <div class="film-item">
+                    <h3>{{ result['name'] }}</h3>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>{% if not error %}Нічого не знайдено.{% endif %}</p>
+        {% endif %}
     </div>
 </div>
 
-<div id="series" class="tab-content" style="display:none;">
+<div id="series" class="tab-content" {% if active_tab != 'series' %}style="display:none;"{% endif %}>
     <h2>Серіали</h2>
-    <!-- Тут буде виведено список серіалів -->
     <div id="series-list">
-        {% for series in series %}
-            <div class="series-item">
-                <h3>{{ series.title }}</h3>
-                <p>{{ series.description }}</p>
-            </div>
-        {% endfor %}
+        {% if search_results %}
+            {% for result in search_results %}
+                <div class="series-item">
+                    <h3>{{ result['name'] }}</h3>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>{% if not error %}Нічого не знайдено.{% endif %}</p>
+        {% endif %}
     </div>
 </div>
 
-<div id="anime" class="tab-content" style="display:none;">
+<div id="anime" class="tab-content" {% if active_tab != 'anime' %}style="display:none;"{% endif %}>
     <h2>Аніме</h2>
-    <!-- Тут буде виведено список аніме -->
     <div id="anime-list">
-        {% for anime in anime %}
-            <div class="anime-item">
-                <h3>{{ anime.title }}</h3>
-                <p>{{ anime.description }}</p>
-            </div>
-        {% endfor %}
+        {% if search_results %}
+            {% for result in search_results %}
+                <div class="anime-item">
+                    <h3>{{ result['name'] }}</h3>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>{% if not error %}Нічого не знайдено.{% endif %}</p>
+        {% endif %}
     </div>
 </div>
 
-<div id="manga" class="tab-content" style="display:none;">
+<div id="manga" class="tab-content" {% if active_tab != 'manga' %}style="display:none;"{% endif %}>
     <h2>Манга</h2>
-    <!-- Тут буде виведено список манги -->
     <div id="manga-list">
-        {% for manga in manga %}
-            <div class="manga-item">
-                <h3>{{ manga.title }}</h3>
-                <p>{{ manga.description }}</p>
-            </div>
-        {% endfor %}
+        {% if search_results %}
+            {% for result in search_results %}
+                <div class="manga-item">
+                    <h3>{{ result['name'] }}</h3>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>{% if not error %}Нічого не знайдено.{% endif %}</p>
+        {% endif %}
     </div>
 </div>
+
 
 <!-- Модальне вікно для авторизації -->
 <div id="loginModal" class="modal">
@@ -98,20 +112,29 @@
 
 <!-- JavaScript для вкладок і модального вікна -->
 <script>
-    // Функція для відкриття вкладки
-    function openTab(event, tabId) {
-        // Приховуємо весь вміст вкладок
+ function openTab(event, tabId) {
+        // Сховати всі вкладки
         const tabContents = document.querySelectorAll(".tab-content");
         tabContents.forEach(content => content.style.display = "none");
 
-        // Знімаємо активний клас з усіх вкладок
+        // Видалити активний стан у навігації
         const navbarItems = document.querySelectorAll(".navbar-item");
         navbarItems.forEach(item => item.classList.remove("active"));
 
-        // Показуємо обраний вміст і встановлюємо активний стан для вибраної вкладки
+        // Відобразити вибрану вкладку та додати активний стан
         document.getElementById(tabId).style.display = "block";
         event.currentTarget.classList.add("active");
+
+        // Змінити активну вкладку в прихованому полі форми
+        document.getElementById("activeTabInput").value = tabId;
     }
+
+    // Встановити початкову вкладку
+    const activeTab = "{{ active_tab }}";
+    if (activeTab) {
+        document.querySelector(`.navbar-item[onclick="openTab(event, '${activeTab}')"]`).click();
+    }
+    
 
     // Відкриває модальне вікно при натисканні на "Акаунт"
     document.querySelector('#loginLink').onclick = function(event) {
@@ -133,7 +156,7 @@
     }
 
     // Показуємо першу вкладку за замовчуванням
-    document.getElementById("films").style.display = "block";
+    //document.getElementById("films").style.display = "block";
 </script>
 
 </body>
