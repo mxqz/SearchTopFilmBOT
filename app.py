@@ -1,22 +1,35 @@
-###Todo list###
-#написати БД
-#підключити БД
-#тестування багів
-#доробити дизайн для пошуку та помилок
-
-from flask import Flask, render_template, request, jsonify
-import mysql.connector
-from mysql.connector import Error
+from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask_mysqldb import MySQL
+import bcrypt
+import binascii
+import logging
 
 app = Flask(__name__)
 
-#Налаштування підключення до бази даних
-db_config = {                                                     #<--- зробити підчас підключення БД
-    'host': 'localhost',
-    'user': 'root',
-    'password': '',
-    'database': 'your_database_name'
-}
+# Конфігурація MySQL
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'  # Ваш користувач MySQL
+app.config['MYSQL_PASSWORD'] = 'rO8cD%k3$z'  # Ваш пароль MySQL
+app.config['MYSQL_DB'] = 'SearchTopFilmBot'  # Назва вашої бази даних
+
+# Ініціалізація MySQL
+mysql = MySQL(app)
+
+# Хешування паролів
+def hash_password(password):
+    # Генерація salt та хешування пароля
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    # Перетворення хешу в hex формат (стрічка, яку можна зберігати)
+    return binascii.hexlify(hashed_password).decode('utf-8')
+
+# Функція для перевірки пароля
+def check_password(password, hashed_password):
+    # Відновлення хешу з hex-формату
+    hashed_password_bytes = binascii.unhexlify(hashed_password.encode('utf-8'))
+    # Перевірка введеного пароля
+    return bcrypt.checkpw(password.encode('utf-8'), hashed_password_bytes)
+
 # Список фільмів (для тесту)
 FILMS = [
     {"id": 1, "name": "Inception"},
@@ -29,6 +42,7 @@ FILMS = [
 def home():
     return render_template('index.html', active_tab='films', search_results=None, error=None)
 
+# Маршрут для пошуку
 @app.route('/api/search', methods=['GET'])
 def search():
     query = request.args.get('q', '').lower()
@@ -37,9 +51,8 @@ def search():
     results = []
 
     try:
-        # Спроба підключення до бази даних
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor(dictionary=True)
+        # Підключення до бази даних через Flask-MySQLdb
+        cursor = mysql.connection.cursor()
 
         # Виконання SQL-запиту залежно від активної вкладки
         if tab == 'films':
@@ -57,16 +70,12 @@ def search():
         if not error:
             results = cursor.fetchall()
 
-    except Error as e:
+    except Exception as e:
         error = "Немає доступу до бази даних. Перевірте підключення."
         print(f"Database error: {e}")  # Лог помилки у консолі для дебагу
-    except Exception as e:
-        error = "Сталася несподівана помилка."
-        print(f"General error: {e}")  # Лог інших помилок у консолі
     finally:
-        # Закриття підключення до бази даних, якщо воно було відкрито
-        if 'connection' in locals() and connection.is_connected():
-            connection.close()
+        # Закриття курсора
+        cursor.close()
 
     # Повертаємо HTML з результатами або повідомленням про помилку
     return render_template(
@@ -76,19 +85,53 @@ def search():
         error=error
     )
 
+# Маршрут для реєстрації
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    username = data['username']
+    password = data['password']
+    
+    hashed_password = hash_password(password)
+    
+    cursor = mysql.connection.cursor()
+    cursor.execute('INSERT INTO user_database (username, password_hash) VALUES (%s, %s)', (username, hashed_password))
+    mysql.connection.commit()
+    cursor.close()
+
+    return jsonify({'success': True})
+
+# Маршрут для авторизації
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data['username']
+    password = data['password']
+    
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT password_hash FROM user_database WHERE username = %s', (username,))
+    result = cursor.fetchone()
+    
+    if result and check_password(password, result[0]):
+        # Повертаємо успішну відповідь і ім'я користувача
+        return jsonify({'success': True, 'username': username})
+    else:
+        return jsonify({'success': False, 'message': 'Невірні дані для входу'})
+    
+@app.route('/logout', methods=['POST'])
+def logout():
+    # Логіка виходу, наприклад, очищення сесії
+    session.pop('user', None)  # Якщо ви використовуєте сесії для збереження даних про користувача
+
+    return jsonify({'success': True})
+
+
+
+logging.basicConfig(level=logging.DEBUG)
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return "Сторінку не знайдено!", 404
+
 if __name__ == '__main__':
     app.run(debug=True)
-
-# Головна сторінка з пошуковою формою
-# @app.route('/')
-# def index():                                                                      <--- попередня версія пошуку
-#     return '''
-#         <form action="/search" method="get">
-#             <input type="text" name="query" placeholder="Введіть запит для пошуку" required>
-#             <button type="submit">Пошук</button>
-#         </form>
-#     '''
-
-
-# Обробник пошукового запиту
-

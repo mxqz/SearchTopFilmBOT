@@ -21,9 +21,10 @@
         <button type="submit">Пошук</button>
     </form>
 
-    <a href="#" class="navbar-item account" id="loginLink">Вхід
+    <a href="#" class="navbar-item account" id="loginLink" onclick="openModal(event)">Вхід
         <img src="{{ url_for('static', filename='Images/account-icon.png') }}" alt="Іконка акаунта" class="account-icon">
     </a>
+    <button id="logoutBtn" class="navbar-item" style="display: none;" onclick="logout()">Вийти</button>
 </div>
 
 <!-- Повідомлення про помилку -->
@@ -32,6 +33,11 @@
     <p>{{ error }}</p>
 </div>
 {% endif %}
+
+<div class="auth-links">
+    <a href="{{ url_for('login') }}">Login</a>
+    <a href="{{ url_for('register') }}">Register</a>
+</div>
 
 <!-- Контейнер для вкладок -->
 <div id="films" class="tab-content" {% if active_tab != 'films' %}style="display:none;"{% endif %}>
@@ -99,55 +105,37 @@
 <div id="loginModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
-        <h2>Вхід в акаунт</h2>
-        <form action="#" method="post">
+        <h2 id="modal-title">Вхід в акаунт</h2>
+        <form id="auth-form" action="#" method="post">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" required>
             <label for="password">Password</label>
             <input type="password" id="password" name="password" required>
             <button type="submit" class="login-button">Увійти</button>
         </form>
+        <p id="toggle-message"><a href="#" onclick="toggleAuthForm()">Немає акаунту? Реєстрація</a></p>
     </div>
 </div>
 
 <!-- JavaScript для вкладок і модального вікна -->
 <script>
- function openTab(event, tabId) {
-        // Сховати всі вкладки
+    function openTab(event, tabId) {
         const tabContents = document.querySelectorAll(".tab-content");
         tabContents.forEach(content => content.style.display = "none");
-
-        // Видалити активний стан у навігації
-        const navbarItems = document.querySelectorAll(".navbar-item");
-        navbarItems.forEach(item => item.classList.remove("active"));
-
-        // Відобразити вибрану вкладку та додати активний стан
         document.getElementById(tabId).style.display = "block";
         event.currentTarget.classList.add("active");
-
-        // Змінити активну вкладку в прихованому полі форми
         document.getElementById("activeTabInput").value = tabId;
     }
 
-    // Встановити початкову вкладку
-    const activeTab = "{{ active_tab }}";
-    if (activeTab) {
-        document.querySelector(`.navbar-item[onclick="openTab(event, '${activeTab}')"]`).click();
-    }
-    
-
-    // Відкриває модальне вікно при натисканні на "Акаунт"
     document.querySelector('#loginLink').onclick = function(event) {
         event.preventDefault();
         document.getElementById('loginModal').style.display = 'flex';
     }
 
-    // Закриває модальне вікно
     function closeModal() {
         document.getElementById('loginModal').style.display = 'none';
     }
 
-    // Закриває модальне вікно при натисканні поза його межами
     window.onclick = function(event) {
         const modal = document.getElementById('loginModal');
         if (event.target === modal) {
@@ -155,8 +143,83 @@
         }
     }
 
-    // Показуємо першу вкладку за замовчуванням
-    //document.getElementById("films").style.display = "block";
+    function toggleAuthForm() {
+        const form = document.getElementById('auth-form');
+        const title = document.getElementById('modal-title');
+        const toggleMessage = document.getElementById('toggle-message');
+        
+        if (title.textContent === 'Вхід в акаунт') {
+            title.textContent = 'Реєстрація';
+            form.querySelector('button').textContent = 'Зареєструватися';
+            toggleMessage.innerHTML = '<a href="#" onclick="toggleAuthForm()">Маєте акаунт? Вхід</a>';
+        } else {
+            title.textContent = 'Вхід в акаунт';
+            form.querySelector('button').textContent = 'Увійти';
+            toggleMessage.innerHTML = '<a href="#" onclick="toggleAuthForm()">Немає акаунту? Реєстрація</a>';
+        }
+    }
+
+    // Обробка форми авторизації / реєстрації
+    document.getElementById('auth-form').onsubmit = function(event) {
+        event.preventDefault();
+        
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const formAction = document.getElementById('modal-title').textContent === 'Вхід в акаунт' ? 'login' : 'register';
+
+        const data = {
+            username: username,
+            password: password,
+        };
+
+        fetch(`/${formAction}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Оновлюємо кнопку "Вхід" на ім'я користувача
+                document.getElementById('loginLink').innerHTML = `${data.username} <img src="{{ url_for('static', filename='Images/account-icon.png') }}" alt="Іконка акаунта" class="account-icon">`;
+                // Показуємо кнопку "Вийти"
+                document.getElementById('logoutBtn').style.display = 'inline-block';
+                // Закриваємо модальне вікно
+                closeModal();
+            } else {
+                alert(data.message);  // Показуємо помилку, якщо є
+            }
+        });
+    };
+
+    // Обробка виходу
+    function logout() {
+    // Логіка виходу, наприклад, можна очистити інформацію про користувача
+        document.getElementById('loginLink').innerHTML = `Вхід <img src="{{ url_for('static', filename='Images/account-icon.png') }}" alt="Іконка акаунта" class="account-icon">`;
+    // Приховуємо кнопку "Вийти"
+        document.getElementById('logoutBtn').style.display = 'none';
+    // Тепер модальне вікно знову не відкриватиметься, якщо користувач вийшов
+}
+
+    fetch('/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('loginLink').innerHTML = `${data.username} <img src="{{ url_for('static', filename='Images/account-icon.png') }}" alt="Іконка акаунта" class="account-icon">`;
+            document.getElementById('logoutBtn').style.display = 'inline-block'; // Показуємо кнопку "Вийти"
+        closeModal();
+        } else {
+            alert(data.message);
+        }
+    });
 </script>
 
 </body>
