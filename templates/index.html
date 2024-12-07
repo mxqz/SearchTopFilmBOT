@@ -18,7 +18,7 @@
     <form action="/api/search" method="get" class="search-bar">
         <input type="text" placeholder="Пошук.." name="q" class="search-input">
         <input type="hidden" name="tab" id="activeTabInput" value="films">
-        <button type="submit">Пошук</button>
+        <!-- <button type="submit">Пошук</button> -->
     </form>
 
     <a href="#" class="navbar-item account" id="loginLink" onclick="openModal(event)">Вхід
@@ -34,10 +34,6 @@
 </div>
 {% endif %}
 
-<div class="auth-links">
-    <a href="{{ url_for('login') }}">Login</a>
-    <a href="{{ url_for('register') }}">Register</a>
-</div>
 
 <!-- Контейнер для вкладок -->
 <div id="films" class="tab-content" {% if active_tab != 'films' %}style="display:none;"{% endif %}>
