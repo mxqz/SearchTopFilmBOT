@@ -7,6 +7,7 @@ body, html {
     font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
     justify-content: space-between;
     align-items: center;
     background-image: url('Images/background.png'); /* Заміни на шлях до свого зображення */
@@ -14,6 +15,32 @@ body, html {
     background-position: center;
     background-repeat: no-repeat;
     color: #fff;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* Основний контейнер для пошукових результатів */
+#films-list {
+    max-height: 80vh; /* Макс. висота для результатів (80% висоти вікна) */
+    overflow-y: auto; /* Додаємо вертикальну прокрутку */
+    padding-bottom: 20px; /* Додаємо відступ, щоб контент не встигав заходити в саму нижню частину */
+}
+
+/* Відступи та вирівнювання */
+body {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#films-list {
+    display: flex;
+    flex-direction: column;
 }
 
 /* Стиль навігаційної панелі */

@@ -42,11 +42,13 @@
         {% if search_results %}
             {% for result in search_results %}
                 <div class="film-item">
-                    <h3>{{ result['name'] }}</h3>
+                    <h3>{{ result['title'] }}</h3>
+                    <p>{{ result['overview'] }}</p>
+                    <hr>
                 </div>
             {% endfor %}
         {% else %}
-            <p>{% if not error %}Нічого не знайдено.{% endif %}</p>
+            <p>Нічого не знайдено.</p>
         {% endif %}
     </div>
 </div>
@@ -216,6 +218,34 @@
             alert(data.message);
         }
     });
+
+    document.querySelector('.search-input').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        const query = e.target.value.trim();
+        
+        fetch(`/api/search?q=${query}&tab=films`)
+            .then(response => response.json())
+            .then(data => {
+                const resultsContainer = document.getElementById('films-list');
+                resultsContainer.innerHTML = ''; // Очищення результатів
+                if (data.length > 0) {
+                    data.forEach(result => {
+                        const item = document.createElement('div');
+                        item.className = 'film-item';
+                        item.innerHTML = `
+                            <h3>${result.title}</h3>
+                            <p>${result.description}</p>
+                            <hr>
+                        `;
+                        resultsContainer.appendChild(item);
+                    });
+                } else {
+                    resultsContainer.innerHTML = '<p>Нічого не знайдено.</p>';
+                }
+            });
+    }
+});
 </script>
 
 </body>

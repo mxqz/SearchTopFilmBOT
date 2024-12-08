@@ -3,6 +3,7 @@ from flask_mysqldb import MySQL
 import bcrypt
 import binascii
 import logging
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -11,6 +12,13 @@ app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'  # Ваш користувач MySQL
 app.config['MYSQL_PASSWORD'] = 'rO8cD%k3$z'  # Ваш пароль MySQL
 app.config['MYSQL_DB'] = 'SearchTopFilmBot'  # Назва вашої бази даних
+
+CSV_FILE_PATH = 'data/films.csv'  # Шлях до вашого файлу
+try:
+    films_data = pd.read_csv(CSV_FILE_PATH)
+except FileNotFoundError:
+    print("Файл не знайдено. Переконайтеся, що файл 'films.csv' знаходиться в папці 'data'.")
+    films_data = pd.DataFrame()  # Порожній DataFrame як запасний варіант
 
 # Ініціалізація MySQL
 mysql = MySQL(app)
@@ -45,45 +53,17 @@ def home():
 # Маршрут для пошуку
 @app.route('/api/search', methods=['GET'])
 def search():
-    query = request.args.get('q', '').lower()
-    tab = request.args.get('tab', 'films')  # Отримуємо вибрану вкладку
-    error = None
-    results = []
+    query = request.args.get('q', '').strip().lower()
+    tab = request.args.get('tab', 'films')
+    
+    if not query:
+        return render_template('index.html', search_results=[], active_tab=tab)
+    
+    # Фільтруємо дані
+    filtered_results = films_data[films_data['title'].str.contains(query, case=False, na=False)]
+    search_results = filtered_results[['title', 'overview']].to_dict(orient='records')  # Включаємо 'title' і 'description'
 
-    try:
-        # Підключення до бази даних через Flask-MySQLdb
-        cursor = mysql.connection.cursor()
-
-        # Виконання SQL-запиту залежно від активної вкладки
-        if tab == 'films':
-            cursor.execute("SELECT * FROM films WHERE title LIKE %s", (f"%{query}%",))
-        elif tab == 'series':
-            cursor.execute("SELECT * FROM series WHERE title LIKE %s", (f"%{query}%",))
-        elif tab == 'anime':
-            cursor.execute("SELECT * FROM anime WHERE title LIKE %s", (f"%{query}%",))
-        elif tab == 'manga':
-            cursor.execute("SELECT * FROM manga WHERE title LIKE %s", (f"%{query}%",))
-        else:
-            error = "Невідома вкладка."
-
-        # Отримання результатів
-        if not error:
-            results = cursor.fetchall()
-
-    except Exception as e:
-        error = "Немає доступу до бази даних. Перевірте підключення."
-        print(f"Database error: {e}")  # Лог помилки у консолі для дебагу
-    finally:
-        # Закриття курсора
-        cursor.close()
-
-    # Повертаємо HTML з результатами або повідомленням про помилку
-    return render_template(
-        'index.html',
-        active_tab=tab,
-        search_results=results,
-        error=error
-    )
+    return render_template('index.html', search_results=search_results, active_tab=tab)
 
 # Маршрут для реєстрації
 @app.route('/register', methods=['POST'])
